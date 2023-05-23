@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 public class StackOfCards {
@@ -22,7 +21,7 @@ public class StackOfCards {
         return cardList;
     }
 
-    public void resetStackStack(){
+    public void resetStackStack() {
         cardList.forEach(card -> card.setDealt(false));
         Collections.shuffle(cardList);
     }
