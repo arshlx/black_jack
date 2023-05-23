@@ -1,7 +1,9 @@
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 public class StackOfCards {
-    public ArrayList<Card> cardList = new ArrayList<>();
+    private final ArrayList<Card> cardList = new ArrayList<>();
 
     public StackOfCards() {
         var cardColour = CardColour.values();
@@ -14,5 +16,14 @@ public class StackOfCards {
                 }
             }
         }
+    }
+
+    public ArrayList<Card> getCardList() {
+        return cardList;
+    }
+
+    public void resetStackStack(){
+        cardList.forEach(card -> card.setDealt(false));
+        Collections.shuffle(cardList);
     }
 }
