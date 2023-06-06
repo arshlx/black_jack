@@ -45,6 +45,10 @@ public class Card {
         isDealt = dealt;
     }
 
+    public void setAceValue (int value){
+        cardValue = value;
+    }
+
     public void getCardDisplay(){
         if (cardSuit == CardSuit.DIAMOND || cardSuit == CardSuit.HEART){
             System.out.print("\u001B[31m");

@@ -2,14 +2,18 @@ import java.util.ArrayList;
 
 public class BlackJackViewModel {
     private final StackOfCards stackOfCards;
+    private final int BLACKJACK = 21;
+    private final ArrayList<Card> cardStack;
     public int nextCardIndex = 0;
-    public ArrayList<Card> cardStack;
-    public Dealer dealer;
+    private Dealer dealer;
     private ArrayList<Player> players;
-
     public BlackJackViewModel() {
         stackOfCards = new StackOfCards();
         cardStack = stackOfCards.getCardList();
+    }
+
+    public Dealer getDealer() {
+        return dealer;
     }
 
     public ArrayList<Player> getPlayers() {
@@ -25,6 +29,61 @@ public class BlackJackViewModel {
             nextCardIndex--;
         }
         dealer = new Dealer(dealerCards);
+    }
+
+    public void dealerHit() {
+        var indexLimit = nextCardIndex - 2;
+        while (dealer.getTotal() < 17) {
+            while (nextCardIndex > indexLimit) {
+                dealer.getCards().add(cardStack.get(nextCardIndex));
+                nextCardIndex--;
+            }
+        }
+        switch (dealer.getState()) {
+            case BLACKJACK -> {
+                players.forEach(player -> {
+                    if (player.getState() == PlayerState.BLACKJACK) {
+                        player.setState(PlayerState.PUSH);
+                    }
+
+                });
+            }
+            case BUST -> {
+                players.forEach(player -> {
+                    if (player.getState() == PlayerState.BUST) {
+                        player.setState(PlayerState.PUSH);
+                    } else if (player.getState() == PlayerState.STAY) {
+                        player.setState(PlayerState.WON);
+                    }
+                });
+            }
+            case DONE -> {
+
+            }
+        }
+
+    }
+
+    private void setPlayerRewards() {
+        players.forEach(player -> {
+            switch (player.getState()) {
+                case BUST, LOST -> {
+                    var money = player.getMoney();
+                    money -= player.getBet();
+                    player.setMoney(money);
+                }
+                case WON -> {
+                    var money = player.getMoney();
+                    money += player.getBet();
+                    player.setMoney(money);
+                }
+                case BLACKJACK -> {
+                    var money = player.getMoney();
+                    money += (1.5 * player.getBet());
+                    player.setMoney(money);
+                }
+            }
+        });
     }
 
     public void resetStack() {

@@ -142,6 +142,10 @@ public class DriverClass {
     }
 
     private static void evaluate() {
+        viewModel.dealerHit();
+
+    }
+    private void displayResults(){
 
     }
 }

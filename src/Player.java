@@ -8,6 +8,7 @@ public class Player {
     public ArrayList<Card> cards;
     public int money;
     public int bet = 0;
+
     public int total = 0;
     private PlayerState state;
     private boolean isFirstMove = true;
@@ -16,9 +17,7 @@ public class Player {
         this.playerName = playerName;
         this.money = money;
         this.cards = cards;
-        cards.forEach(card -> {
-            total += card.getValue();
-        });
+        setTotal();
         setPlayerState(PlayerState.HIT);
     }
 
@@ -57,17 +56,35 @@ public class Player {
     public ArrayList<Card> getCards() {
         return cards;
     }
+    public void setMoney(int money) {
+        this.money = money;
+    }
+    public int getTotal() {
+        return total;
+    }
+
 
     public int setTotal() {
-        var lastCard = cards.get(cards.size() - 1);
-        var ace1 = total + 1;
-        var ace11 = total + 11;
+        var hasAce = cards.stream().anyMatch(card -> card.getCardFace() == CardFace.ACE);
+        if (hasAce){
+            var aceList = cards.stream().filter(card -> card.getCardFace() == CardFace.ACE);
+            aceList.forEach(aceCard -> {
+                aceCard.setAceValue(11);
+            });
+            aceList.forEach(card -> {
+                var sum = 0;
+                for (Card value : cards) {
+                    sum += value.getValue();
+                }
+                if (sum > BLACKJACK) card.setAceValue(1);
+            });
+        }
 
-        if (lastCard.getCardFace() == CardFace.ACE) {
-            if ((BLACKJACK - ace1) > (BLACKJACK - ace11)) {
-                total = ace11;
-            } else total = ace1;
-        } else total += lastCard.getValue();
+        total = 0;
+        cards.forEach(card -> {
+            total += card.getValue();
+        });
+
         if (total == BLACKJACK) {
             setState(PlayerState.BLACKJACK);
         } else if (total > BLACKJACK) setState(PlayerState.BUST);
