@@ -51,4 +51,14 @@ public class Card {
     public void setDealt(boolean dealt) {
         isDealt = dealt;
     }
+
+    public void getCardDisplay(){
+        if (cardColour == CardColour.RED){
+            System.out.print("\u001B[31m");
+            System.out.println(cardFace + " "+ cardSuit.getSymbol());
+            System.out.print("\u001B[0m");
+        }else {
+            System.out.println("This text will be displayed in red.");
+        }
+    }
 }

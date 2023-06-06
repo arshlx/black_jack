@@ -15,13 +15,14 @@ public class StackOfCards {
                 }
             }
         }
+        shuffleAndReset();
     }
 
     public ArrayList<Card> getCardList() {
         return cardList;
     }
 
-    public void resetStackStack() {
+    public void shuffleAndReset() {
         cardList.forEach(card -> card.setDealt(false));
         Collections.shuffle(cardList);
     }
