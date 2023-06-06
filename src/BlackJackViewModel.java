@@ -2,26 +2,25 @@ import java.util.ArrayList;
 
 public class BlackJackViewModel {
     private final StackOfCards stackOfCards;
-    public final int MIN = 1, MAX = 10000;
     public int nextCardIndex = 0;
     public ArrayList<Card> cardStack;
-
-    private ArrayList<Player> players;
     public Dealer dealer;
-
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
+    private ArrayList<Player> players;
 
     public BlackJackViewModel() {
         stackOfCards = new StackOfCards();
         cardStack = stackOfCards.getCardList();
     }
 
-    public void initDealer(){
-        var dealerCards = new ArrayList<Card> ();
-        var indexLimit = nextCardIndex-2;
-        while (nextCardIndex > indexLimit){
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void initDealer() {
+        var dealerCards = new ArrayList<Card>();
+        resetStack();
+        var indexLimit = nextCardIndex - 2;
+        while (nextCardIndex > indexLimit) {
             dealerCards.add(cardStack.get(nextCardIndex));
             nextCardIndex--;
         }
@@ -29,26 +28,31 @@ public class BlackJackViewModel {
     }
 
     public void resetStack() {
-        stackOfCards.shuffleAndReset();
+        if (nextCardIndex < 0)
+            stackOfCards.shuffleAndReset();
+        nextCardIndex = cardStack.size() - 1;
     }
 
-    public ArrayList<Card> throwTwoCards(){
-        var indexLimit = nextCardIndex-2;
+    public ArrayList<Card> throwTwoCards() {
+        resetStack();
+        var indexLimit = nextCardIndex - 2;
         var twoCardList = new ArrayList<Card>();
-        while (nextCardIndex>indexLimit){
+        while (nextCardIndex > indexLimit) {
             twoCardList.add(cardStack.get(nextCardIndex));
-            addToDiscardPile();
         }
         return twoCardList;
     }
 
-    public void hit(int playerNum){
+    public void hit(int playerNum) {
+        resetStack();
         var player = players.get(playerNum);
         player.getCards().add(cardStack.get(nextCardIndex));
         player.setTotal();
         nextCardIndex--;
     }
-    private void addToDiscardPile(){
+
+
+    private void addToDiscardPile() {
         players.forEach(stackOfCards::addCardToDiscardPile);
         nextCardIndex--;
     }

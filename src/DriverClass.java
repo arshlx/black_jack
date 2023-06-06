@@ -6,6 +6,7 @@ public class DriverClass {
     private static final PrintStream syso = System.out;
     private static final Scanner scan = new Scanner(System.in);
     private static final BlackJackViewModel viewModel = new BlackJackViewModel();
+    public static final int MIN = 1, MAX = 10000;
 
     public static void main(String[] args) {
         initPlayers();
@@ -77,11 +78,11 @@ public class DriverClass {
             syso.println(player.getPlayerName() + ", how much do you want to bet?");
             try {
                 var bet = scan.nextInt();
-                if (bet == 0) {
-                    syso.println(player.getPlayerName() + ", you cannot enter the game with zero money.");
-                    initBets(index);
-                } else if (bet < 0) {
+                if (bet < MIN) {
                     syso.println(player.getPlayerName() + ", the bet needs to be at least $1");
+                    initBets(index);
+                } else if (bet > MAX) {
+                    syso.println(player.getPlayerName() + ", the bet cannot be greater than $10,000");
                     initBets(index);
                 } else if (bet > player.getMoney()) {
                     syso.println(player.getPlayerName() + ", you cannot bet more than the amount that you have in your account.");

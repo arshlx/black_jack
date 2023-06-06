@@ -27,6 +27,7 @@ public class StackOfCards {
 
     public void shuffleAndReset() {
         cardList.addAll(discardPile);
+        discardPile.clear();
         cardList.forEach(card -> card.setDealt(false));
         Collections.shuffle(cardList);
     }
