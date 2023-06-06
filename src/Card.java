@@ -1,12 +1,10 @@
 public class Card {
     private int cardValue;
     private final CardSuit cardSuit;
-    private final CardColour cardColour;
     private final CardFace cardFace;
     private boolean isDealt = false;
 
-    public Card(CardColour cardColour, CardFace cardFace, CardSuit cardSuit) {
-        this.cardColour = cardColour;
+    public Card(CardFace cardFace, CardSuit cardSuit) {
         this.cardFace = cardFace;
         this.cardSuit = cardSuit;
         setCardValue();
@@ -14,7 +12,6 @@ public class Card {
 
     private void setCardValue() {
         cardValue = switch (cardFace) {
-            case ONE -> 1;
             case TWO -> 2;
             case THREE -> 3;
             case FOUR -> 4;
@@ -36,10 +33,6 @@ public class Card {
         return cardSuit;
     }
 
-    public CardColour getCardColour() {
-        return cardColour;
-    }
-
     public CardFace getCardFace() {
         return cardFace;
     }
@@ -53,12 +46,12 @@ public class Card {
     }
 
     public void getCardDisplay(){
-        if (cardColour == CardColour.RED){
+        if (cardSuit == CardSuit.DIAMOND || cardSuit == CardSuit.HEART){
             System.out.print("\u001B[31m");
             System.out.println(cardFace + " "+ cardSuit.getSymbol());
             System.out.print("\u001B[0m");
         }else {
-            System.out.println("This text will be displayed in red.");
+            System.out.println(cardFace + " "+ cardSuit.getSymbol());
         }
     }
 }

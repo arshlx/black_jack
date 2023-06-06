@@ -1,3 +1,3 @@
 public enum PlayerState {
-    BUST, STAY, HIT, BLACKJACK, SURRENDER, PUSH
+    STAY, HIT,SURRENDER, PUSH,  BUST, BLACKJACK,
 }
