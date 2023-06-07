@@ -3,7 +3,6 @@ import java.util.Collections;
 
 public class StackOfCards {
     private final ArrayList<Card> cardList = new ArrayList<>();
-    public ArrayList<Card> discardPile = new ArrayList<>();
 
     public StackOfCards() {
         var cardSuit = CardSuit.values();
@@ -21,22 +20,6 @@ public class StackOfCards {
     }
 
     public void shuffleAndReset() {
-        cardList.addAll(discardPile);
-        discardPile.clear();
         Collections.shuffle(cardList);
-    }
-
-    public void addCardToDiscardPile(Player player){
-        player.getCards().forEach(card -> {
-            discardPile.add(card);
-            cardList.remove(card);
-        });
-    }
-
-    public void addCardToDiscardPile(Dealer dealer){
-        dealer.getCards().forEach(card -> {
-            discardPile.add(card);
-            cardList.remove(card);
-        });
     }
 }

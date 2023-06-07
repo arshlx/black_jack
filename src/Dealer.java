@@ -1,16 +1,12 @@
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Dealer {
     private final int BLACKJACK = 21;
 
-    private final ArrayList<Card> cards;
+    private final ArrayList<Card> cards = new ArrayList<>();
     private int total = 0;
     private PlayerState state;
-
-    public Dealer(ArrayList<Card> cards) {
-        this.cards = cards;
-        setTotal();
-    }
 
     public static void main(String[] args) {
 
@@ -34,27 +30,18 @@ public class Dealer {
     }
 
     public void setTotal() {
-        var hasAce = cards.stream().anyMatch(card -> card.getCardFace() == CardFace.ACE);
-
-        if (hasAce) {
-            var aceList = cards.stream().filter(card -> card.getCardFace() == CardFace.ACE);
-            aceList.forEach(aceCard -> aceCard.setAceValue(11));
-            total = 0;
-            cards.forEach(card -> total += card.getValue());
-            if (total > 16) {
-                aceList.forEach(card -> {
-                    var sum = 0;
-                    for (Card value : cards) {
-                        sum += value.getValue();
-                    }
-                    if (sum > BLACKJACK) card.setAceValue(1);
-                });
-            }
-        }
-
+        AtomicInteger aceCount = new AtomicInteger();
+        cards.forEach(card -> {
+            if (card.getCardFace() == CardFace.ACE) aceCount.getAndIncrement();
+        });
         total = 0;
-        cards.forEach(card -> total += card.getValue());
-
+        cards.forEach(card -> {
+            total += card.getValue();
+        });
+        int potentialValue = total + 10;
+        if (aceCount.get() > 0 && potentialValue <= 21) {
+            total = potentialValue;
+        }
         if (total == BLACKJACK) {
             setState(PlayerState.BLACKJACK);
         } else if (total > BLACKJACK) setState(PlayerState.BUST);

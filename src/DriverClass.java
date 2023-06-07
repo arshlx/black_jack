@@ -133,15 +133,15 @@ public class DriverClass {
                             player.setState(PlayerState.HIT);
                             player.setFirstMove(false);
                             viewModel.hit(index);
+                            showTable(false);
                             var hitAgain = true;
-                            while (hitAgain) {
+                            while (hitAgain && player.getState() != PlayerState.BUST && player.getState() != PlayerState.BLACKJACK) {
                                 syso.println(player.getPlayerName() + ", do you want to hit again?(y/n)");
                                 var response = scan.next();
                                 switch (response.toLowerCase().charAt(0)) {
                                     case 'y' -> {
                                         viewModel.hit(index);
-                                        showTable(false
-                                        );
+                                        showTable(false);
                                     }
                                     case 'n' -> hitAgain = false;
                                     default -> syso.println("Invalid input. Please try again");
@@ -169,10 +169,10 @@ public class DriverClass {
                     selectMoves(index);
                 }
             }
-            viewModel.dealerHit();
-            showTable(true);
-            displayResults();
         }
+        viewModel.dealerHit();
+        showTable(true);
+        displayResults();
     }
 
     private static void displayResults() {
@@ -189,8 +189,7 @@ public class DriverClass {
                 case BLACKJACK ->
                         syso.println(player.getPlayerName() + ", you won! You hot a blackjack! your winnings: $" + (1.5 * player.getBet()) + "\nYour total money is now $" + player.getMoney());
             }
-            player.setState(PlayerState.HIT);
-            viewModel.addCardsToDiscardPile(player);
+//            player.setState(PlayerState.HIT);
         });
         viewModel.resetStack();
 //        playAgain();

@@ -20,7 +20,7 @@ public class Card {
             case EIGHT -> 8;
             case NINE -> 9;
             case TEN, JACK, KING, QUEEN -> 10;
-            default -> 0;
+            default -> 1;
         };
     }
 
