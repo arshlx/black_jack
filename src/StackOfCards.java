@@ -16,11 +16,6 @@ public class StackOfCards {
         shuffleAndReset();
     }
 
-  /*  public static void main(String[] args) {
-
-
-    }*/
-
     public ArrayList<Card> getCardList() {
         return cardList;
     }
@@ -28,7 +23,6 @@ public class StackOfCards {
     public void shuffleAndReset() {
         cardList.addAll(discardPile);
         discardPile.clear();
-        cardList.forEach(card -> card.setDealt(false));
         Collections.shuffle(cardList);
     }
 

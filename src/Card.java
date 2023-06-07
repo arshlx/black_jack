@@ -2,7 +2,6 @@ public class Card {
     private final CardSuit cardSuit;
     private final CardFace cardFace;
     private int cardValue;
-    private boolean isDealt = false;
 
     public Card(CardFace cardFace, CardSuit cardSuit) {
         this.cardFace = cardFace;
@@ -29,20 +28,9 @@ public class Card {
         return cardValue;
     }
 
-    public CardSuit getCardSuit() {
-        return cardSuit;
-    }
 
     public CardFace getCardFace() {
         return cardFace;
-    }
-
-    public boolean isDealt() {
-        return isDealt;
-    }
-
-    public void setDealt(boolean dealt) {
-        isDealt = dealt;
     }
 
     public void setAceValue(int value) {

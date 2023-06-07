@@ -33,18 +33,14 @@ public class Dealer {
         return total;
     }
 
-    public int setTotal() {
+    public void setTotal() {
         var hasAce = cards.stream().anyMatch(card -> card.getCardFace() == CardFace.ACE);
 
         if (hasAce) {
             var aceList = cards.stream().filter(card -> card.getCardFace() == CardFace.ACE);
-            aceList.forEach(aceCard -> {
-                aceCard.setAceValue(11);
-            });
+            aceList.forEach(aceCard -> aceCard.setAceValue(11));
             total = 0;
-            cards.forEach(card -> {
-                total += card.getValue();
-            });
+            cards.forEach(card -> total += card.getValue());
             if (total > 16) {
                 aceList.forEach(card -> {
                     var sum = 0;
@@ -57,14 +53,11 @@ public class Dealer {
         }
 
         total = 0;
-        cards.forEach(card -> {
-            total += card.getValue();
-        });
+        cards.forEach(card -> total += card.getValue());
 
         if (total == BLACKJACK) {
             setState(PlayerState.BLACKJACK);
         } else if (total > BLACKJACK) setState(PlayerState.BUST);
         else setState(PlayerState.DONE);
-        return total;
     }
 }

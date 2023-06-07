@@ -42,7 +42,6 @@ public class DriverClass {
             } catch (InputMismatchException e) {
                 scan.nextLine();
                 syso.println("Invalid input, please try again.");
-                initPlayers();
             }
         }
 
@@ -53,8 +52,12 @@ public class DriverClass {
 
     private static Player initPlayerName() {
         var playerName = "";
+        var playerNumber = 0;
+        if (viewModel.getPlayers().size() < 2)
+            playerNumber = viewModel.getPlayers().size() + 1;
+        else playerNumber = viewModel.getPlayers().size();
         while (true) {
-            syso.println("What is the name of the player?");
+            syso.println("What is the name of player " + playerNumber);
             playerName = scan.next();
             if (playerName.isEmpty()) {
                 syso.println("Player name cannot be empty");
@@ -67,7 +70,7 @@ public class DriverClass {
     private static Player createPlayer(String name) {
         var startingMoney = 0;
 
-        syso.println(name + "please enter starting amount: ");
+        syso.println(name + " please enter starting amount: ");
         try {
             startingMoney = scan.nextInt();
             if (startingMoney == 0) {
@@ -77,15 +80,17 @@ public class DriverClass {
                 syso.println(name + ", you cannot enter the game with no money.");
                 createPlayer(name);
             }
+            syso.println(name + "money: " + startingMoney);
         } catch (InputMismatchException e) {
             scan.nextLine();
             syso.println("Invalid input, please try again.");
+            createPlayer(name);
         }
         return new Player(name, startingMoney, viewModel.throwTwoCards());
     }
 
     private static void initBets(int index) {
-        for (; index < viewModel.getPlayers().size(); index++) {
+        for (; index < viewModel.getNumPlayers(); index++) {
             var player = viewModel.getPlayers().get(index);
 
             syso.println(player.getPlayerName() + ", how much do you want to bet?");
@@ -115,7 +120,7 @@ public class DriverClass {
     private static void selectMoves(int index) {
         for (; index < viewModel.getPlayers().size(); index++) {
             var player = viewModel.getPlayers().get(index);
-            if (player.getState() != PlayerState.HIT) {
+            if (player.getState() == PlayerState.HIT) {
                 syso.println(player.getPlayerName() + ", What's your move?\n0 to stay\n1 to hit\n2 to surrender");
                 try {
                     var move = scan.nextInt();
@@ -128,6 +133,23 @@ public class DriverClass {
                             player.setState(PlayerState.HIT);
                             player.setFirstMove(false);
                             viewModel.hit(index);
+                            var hitAgain = true;
+                            while (hitAgain) {
+                                syso.println(player.getPlayerName() + ", do you want to hit again?(y/n)");
+                                var response = scan.next();
+                                switch (response.toLowerCase().charAt(0)) {
+                                    case 'y' -> {
+                                        viewModel.hit(index);
+                                        showTable(false
+                                        );
+                                    }
+                                    case 'n' -> hitAgain = false;
+                                    default -> syso.println("Invalid input. Please try again");
+                                }
+                                if (response.charAt(0) == 'n') {
+                                    hitAgain = false;
+                                }
+                            }
                         }
                         case 2 -> {
                             if (player.getFirstMove()) player.setState(PlayerState.SURRENDER);
@@ -147,10 +169,7 @@ public class DriverClass {
                     selectMoves(index);
                 }
             }
-
-            var stateCheck = viewModel.getPlayers().stream().anyMatch(pla -> pla.getState() == PlayerState.HIT && pla.getMoney() > 0);
-            if (stateCheck) selectMoves(0);
-            else viewModel.dealerHit();
+            viewModel.dealerHit();
             showTable(true);
             displayResults();
         }

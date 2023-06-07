@@ -4,11 +4,12 @@ public class BlackJackViewModel {
     private final StackOfCards stackOfCards;
     private final int BLACKJACK = 21;
     private final ArrayList<Card> cardStack;
-    public int nextCardIndex = 0;
+    public int nextCardIndex = 52;
     private Dealer dealer;
-    private ArrayList<Player> players;
+    private final ArrayList<Player> players = new ArrayList<>();
 
     private int numPlayers = 0;
+//    private Player
 
     public BlackJackViewModel() {
         stackOfCards = new StackOfCards();
@@ -22,6 +23,7 @@ public class BlackJackViewModel {
     public ArrayList<Player> getPlayers() {
         return players;
     }
+
     public int getNumPlayers() {
         return numPlayers;
     }
@@ -29,6 +31,7 @@ public class BlackJackViewModel {
     public void setNumPlayers(int numPlayers) {
         this.numPlayers = numPlayers;
     }
+
     public void initDealer() {
         var dealerCards = new ArrayList<Card>();
         resetStack();
@@ -41,12 +44,10 @@ public class BlackJackViewModel {
     }
 
     public void dealerHit() {
-        var indexLimit = nextCardIndex - 2;
+        if (nextCardIndex < 1) resetStack();
         while (dealer.getTotal() < 17) {
-            while (nextCardIndex > indexLimit) {
-                dealer.getCards().add(cardStack.get(nextCardIndex));
-                nextCardIndex--;
-            }
+            dealer.getCards().add(cardStack.get(nextCardIndex));
+            nextCardIndex--;
         }
         switch (dealer.getState()) {
             case BLACKJACK -> {
@@ -114,6 +115,7 @@ public class BlackJackViewModel {
         var twoCardList = new ArrayList<Card>();
         while (nextCardIndex > indexLimit) {
             twoCardList.add(cardStack.get(nextCardIndex));
+            nextCardIndex--;
         }
         return twoCardList;
     }
