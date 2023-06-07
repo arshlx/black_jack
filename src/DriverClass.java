@@ -12,9 +12,11 @@ public class DriverClass {
         initPlayers();
         viewModel.initDealer();
         syso.println("Lets place the bets!");
-        initBets(0);
+        initBets();
         showTable(false);
-        selectMoves(0);
+        selectMoves();
+        viewModel.resetStack();
+        playAgain();
     }
 
     private static void showTable(boolean revealDealerCards) {
@@ -33,14 +35,16 @@ public class DriverClass {
 
     private static void initPlayers() {
         while (true) {
-            syso.println("How many players do you want to add?");
+            syso.println("How many players do you want to add? (press 0 to exit)");
             try {
-                viewModel.setNumPlayers(scan.nextInt());
-                if (viewModel.getNumPlayers() < 1) {
-                    syso.println("At least 1 player is needed to play the game");
-                    initPlayers();
+                var numPlayers = scan.nextInt();
+                if (viewModel.getNumPlayers() < 0) {
+                    syso.println("Players cannot be negative.");
+                } else if (numPlayers == 0) System.exit(0);
+                else {
+                    viewModel.setNumPlayers(numPlayers);
+                    break;
                 }
-                break;
             } catch (InputMismatchException e) {
                 scan.nextLine();
                 syso.println("Invalid input, please try again.");
@@ -63,7 +67,6 @@ public class DriverClass {
             playerName = scan.next();
             if (playerName.isEmpty()) {
                 syso.println("Player name cannot be empty");
-                initPlayerName();
             } else break;
         }
         return createPlayer(playerName);
@@ -71,105 +74,107 @@ public class DriverClass {
 
     private static Player createPlayer(String name) {
         var startingMoney = 0;
-
-        syso.println(name + " please enter starting amount: ");
-        try {
-            startingMoney = scan.nextInt();
-            if (startingMoney == 0) {
-                syso.println(name + ", you cannot enter the game with zero money.");
-                createPlayer(name);
-            } else if (startingMoney < 0) {
-                syso.println(name + ", you cannot enter the game with no money.");
-                createPlayer(name);
+        while (true) {
+            syso.println(name + " please enter starting amount: ");
+            try {
+                startingMoney = scan.nextInt();
+                if (startingMoney == 0) {
+                    syso.println(name + ", you cannot enter the game with zero money.");
+                } else if (startingMoney < 0) {
+                    syso.println(name + ", you cannot enter the game with no money.");
+                } else {
+                    syso.println("Player created successfully.");
+                    break;
+                }
+            } catch (InputMismatchException e) {
+                scan.nextLine();
+                syso.println("Invalid input, please try again.");
             }
-            syso.println(name + "money: " + startingMoney);
-        } catch (InputMismatchException e) {
-            scan.nextLine();
-            syso.println("Invalid input, please try again.");
-            createPlayer(name);
         }
         return new Player(name, startingMoney, viewModel.throwTwoCards());
     }
 
-    private static void initBets(int index) {
-        for (; index < viewModel.getNumPlayers(); index++) {
+    private static void initBets() {
+        for (int index = 0; index < viewModel.getNumPlayers(); index++) {
             var player = viewModel.getPlayers().get(index);
+            while (true) {
+                syso.println(player.getPlayerName() + ", how much do you want to bet?");
+                try {
+                    var bet = scan.nextInt();
+                    if (bet < MIN) {
+                        syso.println(player.getPlayerName() + ", the bet needs to be at least $1");
+                    } else if (bet > MAX) {
+                        syso.println(player.getPlayerName() + ", the bet cannot be greater than $10,000");
+                    } else if (bet > player.getMoney()) {
+                        syso.println(player.getPlayerName() + ", you cannot bet more than the amount that you have in your account.");
+                    } else {
+                        player.setBet(bet);
+                        break;
+                    }
 
-            syso.println(player.getPlayerName() + ", how much do you want to bet?");
-            try {
-                var bet = scan.nextInt();
-                if (bet < MIN) {
-                    syso.println(player.getPlayerName() + ", the bet needs to be at least $1");
-                    initBets(index);
-                } else if (bet > MAX) {
-                    syso.println(player.getPlayerName() + ", the bet cannot be greater than $10,000");
-                    initBets(index);
-                } else if (bet > player.getMoney()) {
-                    syso.println(player.getPlayerName() + ", you cannot bet more than the amount that you have in your account.");
-                    initBets(index);
-                } else {
-                    player.setBet(bet);
+                } catch (InputMismatchException e) {
+                    scan.nextLine();
+                    syso.println("Invalid input, please try again.");
                 }
-
-            } catch (InputMismatchException e) {
-                scan.nextLine();
-                syso.println("Invalid input, please try again.");
-                initBets(index);
             }
         }
     }
 
-    private static void selectMoves(int index) {
-        for (; index < viewModel.getPlayers().size(); index++) {
+    private static void selectMoves() {
+        for (int index = 0; index < viewModel.getPlayers().size(); index++) {
             var player = viewModel.getPlayers().get(index);
             if (player.getState() == PlayerState.HIT) {
-                syso.println(player.getPlayerName() + ", What's your move?\n0 to stay\n1 to hit\n2 to surrender");
-                try {
-                    var move = scan.nextInt();
-                    switch (move) {
-                        case 0 -> {
-                            player.setState(PlayerState.STAY);
-                            player.setFirstMove(false);
-                        }
-                        case 1 -> {
-                            player.setState(PlayerState.HIT);
-                            player.setFirstMove(false);
-                            viewModel.hit(index);
-                            showTable(false);
-                            var hitAgain = true;
-                            while (hitAgain && player.getState() != PlayerState.BUST && player.getState() != PlayerState.BLACKJACK) {
-                                syso.println(player.getPlayerName() + ", do you want to hit again?(y/n)");
-                                var response = scan.next();
-                                switch (response.toLowerCase().charAt(0)) {
-                                    case 'y' -> {
-                                        viewModel.hit(index);
-                                        showTable(false);
+                var exitLoop = false;
+                while (!exitLoop) {
+                    if (player.getFirstMove())
+                        syso.println(player.getPlayerName() + ", What's your move?\n0 to stay\n1 to hit\n2 to surrender");
+                    else syso.println(player.getPlayerName() + ", What's your move?\n0 to stay\n1 to hit");
+                    try {
+                        var move = scan.nextInt();
+                        switch (move) {
+                            case 0 -> {
+                                player.setState(PlayerState.STAY);
+                                player.setFirstMove(false);
+                                exitLoop = true;
+                            }
+                            case 1 -> {
+                                player.setState(PlayerState.HIT);
+                                player.setFirstMove(false);
+                                viewModel.hit(index);
+                                showTable(false);
+                                var hitAgain = true;
+                                while (hitAgain && player.getState() != PlayerState.BUST && player.getState() != PlayerState.BLACKJACK) {
+                                    syso.println(player.getPlayerName() + ", do you want to hit again?(y/n)");
+                                    var response = scan.next();
+                                    switch (response.toLowerCase().charAt(0)) {
+                                        case 'y' -> {
+                                            viewModel.hit(index);
+                                            showTable(false);
+                                        }
+                                        case 'n' -> {
+                                            hitAgain = false;
+                                            player.setState(PlayerState.STAY);
+                                        }
+                                        default -> syso.println("Invalid input. Please try again");
                                     }
-                                    case 'n' -> hitAgain = false;
-                                    default -> syso.println("Invalid input. Please try again");
                                 }
-                                if (response.charAt(0) == 'n') {
-                                    hitAgain = false;
-                                    player.setState(PlayerState.STAY);
-                                }
+                                exitLoop = true;
+                            }
+                            case 2 -> {
+                                if (player.getFirstMove()) {
+                                    syso.println(player.getPlayerName() + " has surrendered.");
+                                    player.setState(PlayerState.SURRENDER);
+                                } else syso.println(player.getPlayerName() + ", you cannot surrender.");
+                                exitLoop = true;
+                            }
+                            default -> {
+                                syso.println("Invalid entry, please try again.");
                             }
                         }
-                        case 2 -> {
-                            if (player.getFirstMove()) player.setState(PlayerState.SURRENDER);
-                            else {
-                                syso.println("You cannot surrender after making a move, you can either hit or stay.");
-                                selectMoves(index);
-                            }
-                        }
-                        default -> {
-                            syso.println("Invalid entry, please try again.");
-                            selectMoves(index);
-                        }
+                    } catch (InputMismatchException e) {
+                        scan.nextLine();
+                        syso.println("Invalid input, please try again.");
                     }
-                } catch (InputMismatchException e) {
-                    scan.nextLine();
-                    syso.println("Invalid input, please try again.");
-                    selectMoves(index);
                 }
             }
         }
@@ -182,7 +187,7 @@ public class DriverClass {
         viewModel.getPlayers().forEach(player -> {
             switch (player.getState()) {
                 case WON ->
-                        syso.println(player.getPlayerName() + ", you won! your winnings: $" + player.getBet() + "\nYour total money is now $" + player.getMoney());
+                        syso.println(player.getPlayerName() + ", you won! Your winnings: $" + player.getBet() + "\nYour total money is now $" + player.getMoney());
                 case LOST ->
                         syso.println(player.getPlayerName() + ", you lost! Total amount lost: $" + player.getBet() + "\nYour total money is now $" + player.getMoney());
                 case BUST ->
@@ -190,18 +195,66 @@ public class DriverClass {
                 case PUSH ->
                         syso.println(player.getPlayerName() + ", It was a push!" + "\nYour total money remains the same $" + player.getMoney());
                 case BLACKJACK ->
-                        syso.println(player.getPlayerName() + ", you won! You hot a blackjack! your winnings: $" + (1.5 * player.getBet()) + "\nYour total money is now $" + player.getMoney());
+                        syso.println(player.getPlayerName() + ", you won! You got a blackjack! your winnings: $" + (1.5 * player.getBet()) + "\nYour total money is now $" + player.getMoney());
+                case SURRENDER -> syso.println(player.getPlayerName() + ", you surrendered! Total amount lost: $" + (0.5 * player.getBet()) + "\nYour total money is now $" + player.getMoney());
             }
-//            player.setState(PlayerState.HIT);
+            player.setState(PlayerState.HIT);
+            player.setFirstMove(true);
+            player.getCards().clear();
+            player.setBet(0);
         });
-        viewModel.resetStack();
-//        playAgain();
+        viewModel.getDealer().getCards().clear();
+        if (viewModel.getDealer().getState() == PlayerState.BUST){
+            syso.println("Dealer went bust!");
+        }
     }
 
-//    private static void playAgain() {
-//        var playAgain = true;
-//        syso.println("Do you want to play again? (y/n)");
-//        var response = scan.next();
-//        if ()
-//    }
+    private static void playAgain() {
+        while (true) {
+            syso.println("Do you want to play again? (y/n)");
+            var response = scan.next();
+            switch (response.toLowerCase().charAt(0)) {
+                case 'y' -> {
+                    checkMoney();
+                    initBets();
+                    viewModel.getPlayers().forEach(player -> player.getCards().addAll(viewModel.throwTwoCards()));
+                    viewModel.initDealer();
+                    showTable(false);
+                    selectMoves();
+                    viewModel.resetStack();
+                }
+                case 'n' -> System.exit(0);
+                default -> syso.println("Invalid input. Please try again");
+            }
+        }
+    }
+
+    private static void checkMoney() {
+        viewModel.getPlayers().forEach(player -> {
+            if (player.getMoney() < 1) {
+                while (true) {
+                    syso.println(player.getPlayerName() + ", your current funds are: $" + player.getMoney() + "\nPlease add money to continue: $");
+                    try {
+                        var money = scan.nextInt();
+                        if (money == 0) {
+                            syso.println("Funds cannot be $0");
+                        } else {
+                            var playerMoney = player.getMoney() + money;
+                            player.setMoney(playerMoney);
+                            if (player.getMoney() < 1)
+                                syso.println("Your funds are not enough to continue.");
+                            else break;
+                        }
+                    } catch (InputMismatchException e) {
+                        scan.nextLine();
+                        syso.println("Invalid input, please try again.");
+                    }
+                }
+            }
+        });
+        if (viewModel.getPlayers().isEmpty()) {
+            syso.println("No players left in the game. Please add at least 1 player to continue.");
+            initPlayers();
+        }
+    }
 }

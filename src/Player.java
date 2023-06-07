@@ -6,7 +6,7 @@ public class Player {
     private final String playerName;
     private final int BLACKJACK = 21;
     private final ArrayList<Card> cards;
-    public int money;
+    public float money;
     public int bet = 0;
 
     public int total = 0;
@@ -17,7 +17,7 @@ public class Player {
         this.playerName = playerName;
         this.money = money;
         this.cards = cards;
-        setPlayerState(PlayerState.HIT);
+        setPlayerState();
         setTotal();
     }
 
@@ -33,11 +33,11 @@ public class Player {
         return playerName;
     }
 
-    public int getMoney() {
+    public float getMoney() {
         return money;
     }
 
-    public void setMoney(int money) {
+    public void setMoney(float money) {
         this.money = money;
     }
 
@@ -72,9 +72,7 @@ public class Player {
             if (card.getCardFace() == CardFace.ACE) aceCount.getAndIncrement();
         });
         total = 0;
-        cards.forEach(card -> {
-            total += card.getValue();
-        });
+        cards.forEach(card -> total += card.getValue());
         int potentialValue = total + 10;
         if (aceCount.get() > 0 && potentialValue <= 21) {
             total = potentialValue;
@@ -84,9 +82,9 @@ public class Player {
         } else if (total > BLACKJACK) setState(PlayerState.BUST);
     }
 
-    private void setPlayerState(PlayerState plState) {
+    private void setPlayerState() {
         if (total == BLACKJACK) {
             state = PlayerState.BLACKJACK;
-        } else state = plState;
+        } else state = PlayerState.HIT;
     }
 }
