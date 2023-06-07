@@ -19,9 +19,9 @@ public class DriverClass {
 
     private static void showTable(boolean revealDealerCards) {
         syso.println("\tDealer cards");
-        if (revealDealerCards)
-        {viewModel.getDealer().getCards().forEach(Card::getCardDisplay);}
-        else syso.println(viewModel.getDealer().getCards().get(0));
+        if (revealDealerCards) {
+            viewModel.getDealer().getCards().forEach(Card::getCardDisplay);
+        } else syso.println(viewModel.getDealer().getCards().get(0));
         syso.println("\tPlayer cards");
         viewModel.getPlayers().forEach(player -> {
             syso.println(player.getPlayerName() + "'s cards");
@@ -30,12 +30,11 @@ public class DriverClass {
     }
 
     private static void initPlayers() {
-        var numPlayers = 0;
         while (true) {
             syso.println("How many players do you want to add?");
             try {
-                numPlayers = scan.nextInt();
-                if (numPlayers<1){
+                viewModel.setNumPlayers(scan.nextInt());
+                if (viewModel.getNumPlayers() < 1) {
                     syso.println("At least 1 player is needed to play the game");
                     initPlayers();
                 }
@@ -47,7 +46,7 @@ public class DriverClass {
             }
         }
 
-        for (int index = 0; index < numPlayers; index++) {
+        for (int index = 0; index < viewModel.getNumPlayers(); index++) {
             viewModel.getPlayers().add(initPlayerName());
         }
     }

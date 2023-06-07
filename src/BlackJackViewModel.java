@@ -8,6 +8,8 @@ public class BlackJackViewModel {
     private Dealer dealer;
     private ArrayList<Player> players;
 
+    private int numPlayers = 0;
+
     public BlackJackViewModel() {
         stackOfCards = new StackOfCards();
         cardStack = stackOfCards.getCardList();
@@ -20,7 +22,13 @@ public class BlackJackViewModel {
     public ArrayList<Player> getPlayers() {
         return players;
     }
+    public int getNumPlayers() {
+        return numPlayers;
+    }
 
+    public void setNumPlayers(int numPlayers) {
+        this.numPlayers = numPlayers;
+    }
     public void initDealer() {
         var dealerCards = new ArrayList<Card>();
         resetStack();
