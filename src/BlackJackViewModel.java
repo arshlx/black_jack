@@ -6,7 +6,8 @@ public class BlackJackViewModel {
     private final ArrayList<Card> cardStack;
     private final ArrayList<Player> players = new ArrayList<>();
     public int nextCardIndex = 51;
-    private Dealer dealer = new Dealer();;
+    private Dealer dealer = new Dealer();
+    ;
     private int numPlayers = 0;
 //    private Player
 
@@ -78,20 +79,23 @@ public class BlackJackViewModel {
 
     private void setPlayerRewards() {
         players.forEach(player -> {
+            var money = player.getMoney();
             switch (player.getState()) {
                 case BUST, LOST -> {
-                    var money = player.getMoney();
+
                     money -= player.getBet();
                     player.setMoney(money);
                 }
                 case WON -> {
-                    var money = player.getMoney();
                     money += player.getBet();
                     player.setMoney(money);
                 }
                 case BLACKJACK -> {
-                    var money = player.getMoney();
-                    money += (1.5 * player.getBet());
+                    money -= (1.5 * player.getBet());
+                    player.setMoney(money);
+                }
+                case SURRENDER -> {
+                    money -= (0.5 * player.getBet());
                     player.setMoney(money);
                 }
             }

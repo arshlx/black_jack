@@ -18,6 +18,7 @@ public class Player {
         this.money = money;
         this.cards = cards;
         setPlayerState(PlayerState.HIT);
+        setTotal();
     }
 
     public int getBet() {

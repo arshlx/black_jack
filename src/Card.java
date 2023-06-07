@@ -43,7 +43,7 @@ public class Card {
             System.out.println("\t" + cardFace + " " + cardSuit.getSymbol());
             System.out.print("\u001B[0m");
         } else {
-            System.out.println(cardFace + " " + cardSuit.getSymbol());
+            System.out.println("\t" + cardFace + " " + cardSuit.getSymbol());
         }
     }
 }

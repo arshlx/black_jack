@@ -2,15 +2,15 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Dealer {
+
+    public Dealer(){
+        setTotal();
+    }
     private final int BLACKJACK = 21;
 
     private final ArrayList<Card> cards = new ArrayList<>();
     private int total = 0;
     private PlayerState state;
-
-    public static void main(String[] args) {
-
-    }
 
     public PlayerState getState() {
         return state;

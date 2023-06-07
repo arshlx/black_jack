@@ -18,14 +18,16 @@ public class DriverClass {
     }
 
     private static void showTable(boolean revealDealerCards) {
-        syso.println("\tDealer cards");
+        syso.println("\n\tDealer cards");
         if (revealDealerCards) {
             viewModel.getDealer().getCards().forEach(Card::getCardDisplay);
-        } else syso.println(viewModel.getDealer().getCards().get(0));
-        syso.println("\tPlayer cards");
+        } else viewModel.getDealer().getCards().get(0).getCardDisplay();
+        syso.println("\n\t-----------------");
+        syso.println("\n\tPlayer cards");
         viewModel.getPlayers().forEach(player -> {
-            syso.println(player.getPlayerName() + "'s cards");
+            syso.println("\t" + player.getPlayerName() + "'s cards");
             player.getCards().forEach(Card::getCardDisplay);
+            syso.println("\n\t-----------------");
         });
     }
 
@@ -148,6 +150,7 @@ public class DriverClass {
                                 }
                                 if (response.charAt(0) == 'n') {
                                     hitAgain = false;
+                                    player.setState(PlayerState.STAY);
                                 }
                             }
                         }
@@ -185,7 +188,7 @@ public class DriverClass {
                 case BUST ->
                         syso.println(player.getPlayerName() + ", you went bust! Total amount lost: $" + player.getBet() + "\nYour total money is now $" + player.getMoney());
                 case PUSH ->
-                        syso.println(player.getPlayerName() + ", your won! your winnings: $" + player.getBet() + "\nYour total money is now $" + player.getMoney());
+                        syso.println(player.getPlayerName() + ", It was a push!" + "\nYour total money remains the same $" + player.getMoney());
                 case BLACKJACK ->
                         syso.println(player.getPlayerName() + ", you won! You hot a blackjack! your winnings: $" + (1.5 * player.getBet()) + "\nYour total money is now $" + player.getMoney());
             }
