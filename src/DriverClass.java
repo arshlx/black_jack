@@ -9,6 +9,17 @@ public class DriverClass {
     private static final BlackJackViewModel viewModel = new BlackJackViewModel();
 
     public static void main(String[] args) {
+        syso.println("-------------------------------------------------------");
+        syso.println("Welcome to BLACKJACK by Arshdeep Singh and Xingjian Li!");
+        syso.println("-------------------------------------------------------");
+        syso.println("Bet and make your card values closer to 21, but not beyond.");
+        syso.println("HIT to add another card.");
+        syso.println("STAY to stop taking more cards.");
+        syso.println("SURRENDER only allowed in the first decision.");
+        syso.println("If your card values reach exactly 21, you BLACKJACK!");
+        syso.println("-------------------------------------------------------");
+        syso.println("Beat the DEALER and enjoy your time!");
+        syso.println("-------------------------------------------------------");
         initPlayers();
         viewModel.initDealer();
         syso.println("Lets place the bets!");
