@@ -38,4 +38,11 @@ public class StackOfCards {
             cardList.remove(card);
         });
     }
+
+    public void addCardToDiscardPile(Dealer dealer){
+        dealer.getCards().forEach(card -> {
+            discardPile.add(card);
+            cardList.remove(card);
+        });
+    }
 }

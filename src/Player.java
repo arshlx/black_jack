@@ -4,8 +4,7 @@ public class Player {
 
     private final String playerName;
     private final int BLACKJACK = 21;
-
-    public ArrayList<Card> cards;
+    private final ArrayList<Card> cards;
     public int money;
     public int bet = 0;
 
@@ -37,6 +36,10 @@ public class Player {
         return money;
     }
 
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
     public PlayerState getState() {
         return state;
     }
@@ -56,9 +59,7 @@ public class Player {
     public ArrayList<Card> getCards() {
         return cards;
     }
-    public void setMoney(int money) {
-        this.money = money;
-    }
+
     public int getTotal() {
         return total;
     }
@@ -66,7 +67,7 @@ public class Player {
 
     public int setTotal() {
         var hasAce = cards.stream().anyMatch(card -> card.getCardFace() == CardFace.ACE);
-        if (hasAce){
+        if (hasAce) {
             var aceList = cards.stream().filter(card -> card.getCardFace() == CardFace.ACE);
             aceList.forEach(aceCard -> {
                 aceCard.setAceValue(11);

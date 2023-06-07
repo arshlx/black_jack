@@ -3,21 +3,30 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class DriverClass {
+    public static final int MIN = 1, MAX = 10000;
     private static final PrintStream syso = System.out;
     private static final Scanner scan = new Scanner(System.in);
     private static final BlackJackViewModel viewModel = new BlackJackViewModel();
-    public static final int MIN = 1, MAX = 10000;
 
     public static void main(String[] args) {
         initPlayers();
         viewModel.initDealer();
         syso.println("Lets place the bets!");
         initBets(0);
-        showTable();
+        showTable(false);
+        selectMoves(0);
     }
 
-    private static void showTable() {
-        selectMoves(0);
+    private static void showTable(boolean revealDealerCards) {
+        syso.println("\tDealer cards");
+        if (revealDealerCards)
+        {viewModel.getDealer().getCards().forEach(Card::getCardDisplay);}
+        else syso.println(viewModel.getDealer().getCards().get(0));
+        syso.println("\tPlayer cards");
+        viewModel.getPlayers().forEach(player -> {
+            syso.println(player.getPlayerName() + "'s cards");
+            player.getCards().forEach(Card::getCardDisplay);
+        });
     }
 
     private static void initPlayers() {
@@ -26,10 +35,15 @@ public class DriverClass {
             syso.println("How many players do you want to add?");
             try {
                 numPlayers = scan.nextInt();
+                if (numPlayers<1){
+                    syso.println("At least 1 player is needed to play the game");
+                    initPlayers();
+                }
                 break;
             } catch (InputMismatchException e) {
                 scan.nextLine();
                 syso.println("Invalid input, please try again.");
+                initPlayers();
             }
         }
 
@@ -41,7 +55,7 @@ public class DriverClass {
     private static Player initPlayerName() {
         var playerName = "";
         while (true) {
-            syso.println("WHat is the name of the player?");
+            syso.println("What is the name of the player?");
             playerName = scan.next();
             if (playerName.isEmpty()) {
                 syso.println("Player name cannot be empty");
@@ -137,15 +151,37 @@ public class DriverClass {
 
             var stateCheck = viewModel.getPlayers().stream().anyMatch(pla -> pla.getState() == PlayerState.HIT && pla.getMoney() > 0);
             if (stateCheck) selectMoves(0);
-            else evaluate();
+            else viewModel.dealerHit();
+            showTable(true);
+            displayResults();
         }
     }
 
-    private static void evaluate() {
-        viewModel.dealerHit();
-
+    private static void displayResults() {
+        viewModel.getPlayers().forEach(player -> {
+            switch (player.getState()) {
+                case WON ->
+                        syso.println(player.getPlayerName() + ", you won! your winnings: $" + player.getBet() + "\nYour total money is now $" + player.getMoney());
+                case LOST ->
+                        syso.println(player.getPlayerName() + ", you lost! Total amount lost: $" + player.getBet() + "\nYour total money is now $" + player.getMoney());
+                case BUST ->
+                        syso.println(player.getPlayerName() + ", you went bust! Total amount lost: $" + player.getBet() + "\nYour total money is now $" + player.getMoney());
+                case PUSH ->
+                        syso.println(player.getPlayerName() + ", your won! your winnings: $" + player.getBet() + "\nYour total money is now $" + player.getMoney());
+                case BLACKJACK ->
+                        syso.println(player.getPlayerName() + ", you won! You hot a blackjack! your winnings: $" + (1.5 * player.getBet()) + "\nYour total money is now $" + player.getMoney());
+            }
+            player.setState(PlayerState.HIT);
+            viewModel.addCardsToDiscardPile(player);
+        });
+        viewModel.resetStack();
+//        playAgain();
     }
-    private void displayResults(){
 
-    }
+//    private static void playAgain() {
+//        var playAgain = true;
+//        syso.println("Do you want to play again? (y/n)");
+//        var response = scan.next();
+//        if ()
+//    }
 }

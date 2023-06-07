@@ -3,8 +3,8 @@ import java.util.ArrayList;
 public class Dealer {
     private final int BLACKJACK = 21;
 
-    public ArrayList<Card> cards;
-    public int total = 0;
+    private final ArrayList<Card> cards;
+    private int total = 0;
     private PlayerState state;
 
     public Dealer(ArrayList<Card> cards) {

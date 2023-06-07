@@ -1,7 +1,7 @@
 public class Card {
-    private int cardValue;
     private final CardSuit cardSuit;
     private final CardFace cardFace;
+    private int cardValue;
     private boolean isDealt = false;
 
     public Card(CardFace cardFace, CardSuit cardSuit) {
@@ -45,17 +45,17 @@ public class Card {
         isDealt = dealt;
     }
 
-    public void setAceValue (int value){
+    public void setAceValue(int value) {
         cardValue = value;
     }
 
-    public void getCardDisplay(){
-        if (cardSuit == CardSuit.DIAMOND || cardSuit == CardSuit.HEART){
+    public void getCardDisplay() {
+        if (cardSuit == CardSuit.DIAMOND || cardSuit == CardSuit.HEART) {
             System.out.print("\u001B[31m");
-            System.out.println(cardFace + " "+ cardSuit.getSymbol());
+            System.out.println("\t" + cardFace + " " + cardSuit.getSymbol());
             System.out.print("\u001B[0m");
-        }else {
-            System.out.println(cardFace + " "+ cardSuit.getSymbol());
+        } else {
+            System.out.println(cardFace + " " + cardSuit.getSymbol());
         }
     }
 }

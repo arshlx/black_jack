@@ -7,6 +7,7 @@ public class BlackJackViewModel {
     public int nextCardIndex = 0;
     private Dealer dealer;
     private ArrayList<Player> players;
+
     public BlackJackViewModel() {
         stackOfCards = new StackOfCards();
         cardStack = stackOfCards.getCardList();
@@ -58,10 +59,17 @@ public class BlackJackViewModel {
                 });
             }
             case DONE -> {
-
+                players.forEach(player -> {
+                    if (player.getState() == PlayerState.STAY) {
+                        if ((BLACKJACK - player.getTotal()) < (BLACKJACK - dealer.getTotal())) {
+                            player.setState(PlayerState.WON);
+                        } else player.setState(PlayerState.LOST);
+                    }
+                });
             }
         }
-
+        addCardsToDiscardPile();
+        setPlayerRewards();
     }
 
     private void setPlayerRewards() {
@@ -110,9 +118,11 @@ public class BlackJackViewModel {
         nextCardIndex--;
     }
 
+    public void addCardsToDiscardPile(Player player) {
+        stackOfCards.addCardToDiscardPile(player);
+    }
 
-    private void addToDiscardPile() {
-        players.forEach(stackOfCards::addCardToDiscardPile);
-        nextCardIndex--;
+    public void addCardsToDiscardPile() {
+        stackOfCards.addCardToDiscardPile(dealer);
     }
 }
