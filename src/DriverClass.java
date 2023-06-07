@@ -227,6 +227,7 @@ public class DriverClass {
             switch (response.toLowerCase().charAt(0)) {
                 case 'y' -> {
                     checkMoney();
+                    syso.println("Lets place the bets!");
                     initBets();
                     viewModel.getPlayers().forEach(player -> player.getCards().addAll(viewModel.throwTwoCards()));
                     viewModel.initDealer();
