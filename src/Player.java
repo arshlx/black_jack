@@ -6,10 +6,10 @@ public class Player {
     private final String playerName;
     private final int BLACKJACK = 21;
     private final ArrayList<Card> cards;
-    public float money;
-    public int bet = 0;
+    private float money;
+    private int bet = 0;
 
-    public int total = 0;
+    private int total = 0;
     private PlayerState state;
     private boolean isFirstMove = true;
 

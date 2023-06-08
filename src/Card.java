@@ -40,10 +40,10 @@ public class Card {
     public void getCardDisplay() {
         if (cardSuit == CardSuit.DIAMOND || cardSuit == CardSuit.HEART) {
             System.out.print("\u001B[31m");
-            System.out.println("\t" + cardFace + " " + cardSuit.getSymbol());
+            System.out.println("\t" + cardFace + " " + cardSuit);
             System.out.print("\u001B[0m");
         } else {
-            System.out.println("\t" + cardFace + " " + cardSuit.getSymbol());
+            System.out.println("\t" + cardFace + " " + cardSuit);
         }
     }
 }

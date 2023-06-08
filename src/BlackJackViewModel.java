@@ -5,7 +5,7 @@ public class BlackJackViewModel {
     private final int BLACKJACK = 21;
     private final ArrayList<Card> cardStack;
     private final ArrayList<Player> players = new ArrayList<>();
-    public int nextCardIndex = 51;
+    private int nextCardIndex = 51;
     private final Dealer dealer = new Dealer();
     private int numPlayers = 0;
 

@@ -3,7 +3,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class DriverClass {
-    public static final int MIN = 1, MAX = 10000;
+    private static final int MIN = 1, MAX = 10000;
     private static final PrintStream syso = System.out;
     private static final Scanner scan = new Scanner(System.in);
     private static final BlackJackViewModel viewModel = new BlackJackViewModel();
@@ -214,10 +214,10 @@ public class DriverClass {
             player.getCards().clear();
             player.setBet(0);
         });
-        viewModel.getDealer().getCards().clear();
         if (viewModel.getDealer().getState() == PlayerState.BUST){
-            syso.println("Dealer went bust!");
+            syso.println("\nDealer went bust!\n");
         }
+        viewModel.getDealer().getCards().clear();
     }
 
     private static void playAgain() {
