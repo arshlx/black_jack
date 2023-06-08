@@ -46,12 +46,14 @@ public class DriverClass {
 
     private static void initPlayers() {
         while (true) {
-            syso.println("How many players do you want to add? (press 0 to exit)");
+            syso.println("How many players do you want to add? (maximum 5 players. Press 0 to exit)");
             try {
                 var numPlayers = scan.nextInt();
                 if (viewModel.getNumPlayers() < 0) {
                     syso.println("Players cannot be negative.");
                 } else if (numPlayers == 0) System.exit(0);
+                else if (numPlayers > 5)
+                    syso.println("Maximum number of players allowed is 5. Please choose between 1 to 5 players.");
                 else {
                     viewModel.setNumPlayers(numPlayers);
                     break;
@@ -207,14 +209,15 @@ public class DriverClass {
                         syso.println(player.getPlayerName() + ", It was a push!" + "\nYour total money remains the same $" + player.getMoney());
                 case BLACKJACK ->
                         syso.println(player.getPlayerName() + ", you won! You got a blackjack! your winnings: $" + (1.5 * player.getBet()) + "\nYour total money is now $" + player.getMoney());
-                case SURRENDER -> syso.println(player.getPlayerName() + ", you surrendered! Total amount lost: $" + (0.5 * player.getBet()) + "\nYour total money is now $" + player.getMoney());
+                case SURRENDER ->
+                        syso.println(player.getPlayerName() + ", you surrendered! Total amount lost: $" + (0.5 * player.getBet()) + "\nYour total money is now $" + player.getMoney());
             }
             player.setState(PlayerState.HIT);
             player.setFirstMove(true);
             player.getCards().clear();
             player.setBet(0);
         });
-        if (viewModel.getDealer().getState() == PlayerState.BUST){
+        if (viewModel.getDealer().getState() == PlayerState.BUST) {
             syso.println("\nDealer went bust!\n");
         }
         viewModel.getDealer().getCards().clear();
